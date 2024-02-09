@@ -6,7 +6,7 @@ url = 'https://www.uiu.ac.bd/'
 previous_title = "" 
 
 
-def scrape():
+def get_notices():
     global previous_title 
 
     response = requests.get(url)
@@ -26,6 +26,3 @@ def scrape():
         else:
             return None  
 
-
-print(scrape())
-print(scrape())
