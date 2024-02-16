@@ -6,7 +6,6 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    global post_text
     await update.message.reply_text("Hello! Thanks for using our BOT.\nPlease use /get_updates command to get articles ")
 
 
@@ -15,20 +14,23 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_updates(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await handle_auto_update(update)
+    await handle_auto_update(update, context)
 
 
-async def handle_auto_update(update: Update):
+async def handle_auto_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
     last_processed_news: str = ""
-    await update.message.reply_text("From now on,you'll be receiving updates")
-    while True:
+    await update.message.reply_text("From now on, you'll be receiving updates")
+
+    async def job_callback(context):
+        nonlocal last_processed_news
         post_text = get_notices()
         if post_text is not None and post_text != last_processed_news:
-            await update.message.reply_text(post_text)
+            await context.bot.send_message(update.effective_chat.id, text=post_text)
             print(post_text)
             last_processed_news = post_text
+        print(post_text)
 
-        time.sleep(60*60)
+    context.job_queue.run_repeating(job_callback, interval=60*10, first=0)
 
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -41,7 +43,8 @@ if __name__ == '__main__':
     # commands
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('help', help_command))
-    app.add_handler(CommandHandler('get_updates', get_updates))
+    app.add_handler(CommandHandler(
+        'get_updates', get_updates))
 
     # error
     app.add_error_handler(error)
