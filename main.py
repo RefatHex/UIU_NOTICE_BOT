@@ -2,46 +2,36 @@ import time
 from TOKEN import TOKEN
 from scraper import get_notices
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
-from message import send_message_to_all_users, send_message_to_user
-from users import User, add_user_to_csv, is_user_in_csv
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+
+
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global post_text
+    await update.message.reply_text("Hello! Thanks for using our BOT.\nPlease use /get_updates command to get articles ")
+
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("contact admin")
+
+
+async def get_updates(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await handle_auto_update(update, context)
 
 
 async def handle_auto_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
     last_processed_news: str = ""
+    await update.message.reply_text("From now on, you'll be receiving updates")
 
     async def job_callback(context):
         nonlocal last_processed_news
         post_text = get_notices()
         if post_text is not None and post_text != last_processed_news:
-            await send_message_to_all_users(context.bot, post_text)
-            print("Message sent to all users.")
+            await context.bot.send_message(update.effective_chat.id, text=post_text)
+            print(post_text)
             last_processed_news = post_text
+        print(post_text)
 
-    context.job_queue.run_repeating(job_callback, interval=60*10, first=0)
-
-
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_chat.id
-    username = update.effective_user.username
-    first_name = getattr(update.effective_user, 'first_name', '')
-    last_name = getattr(update.effective_user, 'last_name', '')
-    name = first_name + ' ' + \
-        last_name if first_name and last_name else first_name or last_name
-    if not is_user_in_csv(user_id):
-        add_user_to_csv(User(user_id, username, name))
-        await update.message.reply_text("Welcome! To our bot Uiu notice bot")
-        post_text = get_notices()
-        if post_text is not None:
-            await send_message_to_user(context.bot, user_id, post_text)
-
-    else:
-        await update.message.reply_text("Welcome back!")
-    await handle_auto_update(update, context)
-
-
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Contact admin for help")
+        time.sleep(60*60)
 
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -54,6 +44,7 @@ if __name__ == '__main__':
     # commands
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('help', help_command))
+    app.add_handler(CommandHandler('get_updates', get_updates))
 
     # error
     app.add_error_handler(error)
