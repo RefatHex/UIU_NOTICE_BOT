@@ -1,6 +1,5 @@
 import firebase_admin
 from firebase_admin import credentials, db
-from firebase_admin import firestore
 from TOKEN import DATABASE_URL
 
 # Fetch the service account key JSON file contents
@@ -41,3 +40,16 @@ def is_user_in_firestore(user_id):
         str(user_id))
     user_data = user_ref.get()
     return user_data is not None  # Check if user exists
+
+
+def add_notice_to_firestore(notice_text):
+    db.reference('notices').push().set({'text': notice_text})
+
+
+def get_last_notice_from_firestore():
+    last_notice_ref = db.reference(
+        'notices').order_by_key().limit_to_last(1).get()
+    if last_notice_ref:
+        _, last_notice_data = last_notice_ref.popitem()
+        return last_notice_data.get('text')
+    return None
