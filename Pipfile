@@ -7,8 +7,10 @@ name = "pypi"
 requests = "*"
 bs4 = "*"
 python-telegram-bot = {extras = ["job-queue"], version = "*"}
+firebase-admin = "*"
 
 [dev-packages]
+autopep8 = "*"
 
 [requires]
 python_version = "3.11"

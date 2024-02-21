@@ -1,10 +1,9 @@
-import time
 from TOKEN import TOKEN
 from scraper import get_notices
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from message import send_message_to_all_users, send_message_to_user
-from users import User, add_user_to_csv, is_user_in_csv
+from database import User, add_user_to_firestore, is_user_in_firestore
 
 
 async def handle_auto_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -28,8 +27,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     last_name = getattr(update.effective_user, 'last_name', '')
     name = first_name + ' ' + \
         last_name if first_name and last_name else first_name or last_name
-    if not is_user_in_csv(user_id):
-        add_user_to_csv(User(user_id, username, name))
+    if not is_user_in_firestore(user_id):
+        add_user_to_firestore(User(user_id, username, name))
         await update.message.reply_text("Welcome! To our bot Uiu notice bot")
         post_text = get_notices()
         if post_text is not None:
