@@ -2,7 +2,7 @@ from database import read_users_from_firestore
 
 
 async def send_message_to_user(bot, user_id, message):
-    await bot.send_message(user_id, text=message)
+    await bot.send_message(int(user_id), text=message)
 
 
 async def send_message_to_all_users(bot, message):

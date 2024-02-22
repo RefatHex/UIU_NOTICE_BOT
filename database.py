@@ -29,9 +29,8 @@ def read_users_from_firestore():
     users = []
     users_ref = db.reference('users').get()
     if users_ref is not None:
-        for user_id, user_data in users_ref.items():  # Iterate through users
-            users.append(
-                User(user_id, user_data['username'], user_data['name']))
+        for user_id in users_ref.keys():  # Iterate through user IDs
+            users.append(User(user_id))
     return users
 
 

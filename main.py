@@ -3,7 +3,7 @@ from scraper import get_notices
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from message import send_message_to_all_users, send_message_to_user
-from database import User, add_user_to_firestore, is_user_in_firestore, add_notice_to_firestore, get_last_notice_from_firestore
+from database import User, add_user_to_firestore, is_user_in_firestore, read_users_from_firestore, add_notice_to_firestore, get_last_notice_from_firestore
 
 
 async def handle_auto_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -12,6 +12,7 @@ async def handle_auto_update(update: Update, context: ContextTypes.DEFAULT_TYPE)
     async def job_callback(context):
         nonlocal last_processed_news
         post_text = get_notices()
+        print(post_text)
         if post_text is not None and post_text != last_processed_news:
             add_notice_to_firestore(post_text)
             await send_message_to_all_users(context.bot, post_text)
@@ -31,12 +32,15 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_user_in_firestore(user_id):
         add_user_to_firestore(User(user_id, username, name))
         await update.message.reply_text("Welcome! To our bot Uiu notice bot")
+
+        
         # Sending the latest notice to the new user
         latest_notice_text = get_last_notice_from_firestore()
         if latest_notice_text:
             await send_message_to_user(context.bot, user_id, latest_notice_text)
     else:
         await update.message.reply_text("Welcome back!")
+        await send_message_to_all_users(context.bot, get_notices())
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
