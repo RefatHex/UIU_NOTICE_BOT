@@ -16,7 +16,7 @@ class User:
         self.name = name
 
 
-def add_user_to_firestore(user):
+def add_user_to_db(user):
     db_ref = db.reference('users').child(
         str(user.user_id))
     db_ref.set({
@@ -34,7 +34,7 @@ def read_users_from_db():
     return users
 
 
-def is_user_in_firestore(user_id):
+def is_user_in_db(user_id):
     user_ref = db.reference('users').child(
         str(user_id))
     user_data = user_ref.get()
@@ -45,7 +45,7 @@ def add_notice_to_db(notice_text):
     db.reference('notices').push().set({'text': notice_text})
 
 
-def get_last_notice_from_firestore():
+def get_last_notice_from_db():
     last_notice_ref = db.reference(
         'notices').order_by_key().limit_to_last(1).get()
     if last_notice_ref:

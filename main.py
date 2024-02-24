@@ -19,7 +19,7 @@ async def handle_auto_update(update: Update, context: ContextTypes.DEFAULT_TYPE)
             print("Message sent to all users.")
             last_processed_news = post_text
 
-    context.job_queue.run_repeating(job_callback, interval=60, first=0)
+    context.job_queue.run_repeating(job_callback, interval=60*10, first=0)
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -39,11 +39,13 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("Welcome back!")
 
-    await handle_auto_update(update, context)
-
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Contact admin for help")
+
+
+async def main_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await handle_auto_update(update, context)
 
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -56,6 +58,7 @@ if __name__ == '__main__':
     # commands
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('help', help_command))
+    app.add_handler(CommandHandler('main', main_command))
 
     # error
     app.add_error_handler(error)
