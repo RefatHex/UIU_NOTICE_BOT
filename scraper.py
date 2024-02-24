@@ -1,13 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = 'https://www.uiu.ac.bd/'  
+url = 'https://www.uiu.ac.bd/'
 
-previous_title = "" 
+previous_title = ""
 
 
 def get_notices():
-    global previous_title 
+    global previous_title
 
     response = requests.get(url)
 
@@ -20,9 +20,4 @@ def get_notices():
         title = notices[0].find('h4', class_='title').get_text()
         link = notices[0]['href']
 
-        if previous_title != title:  
-            previous_title = title
-            return f'Date:  {date}\nTitle: {title}\nLink: {link}'
-        else:
-            return None  
-
+        return f'Date:  {date}\nTitle: {title}\nLink: {link}'
