@@ -11,6 +11,11 @@ This is a Telegram bot that scrapes the notice section from the website of Unite
 3. Ensure you have a Firebase Realtime Database set up and obtain the `DATABASE_URL`.
 4. Ensure you have a Telegram bot token (`TOKEN`).
 
+
+### Live Bot
+
+Telegram: https://t.me/uiunoticeBOT
+
 ### Configuration
 
 1. Create a file named `TOKEN.py` and define your Telegram bot token as `TOKEN`.
