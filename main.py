@@ -44,8 +44,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Contact admin for help")
 
 
-async def main_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await handle_auto_update(update, context)
+
 
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -58,7 +57,6 @@ if __name__ == '__main__':
     # commands
     app.add_handler(CommandHandler('start', start_command))
     app.add_handler(CommandHandler('help', help_command))
-    app.add_handler(CommandHandler('main', main_command))
 
     # error
     app.add_error_handler(error)
